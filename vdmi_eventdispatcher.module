@@ -1,0 +1,38 @@
+<?php
+
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\Event;
+
+class Bank {
+  private $dispatcher = null;
+
+  function __construct(EventDispatcher $dispatcher) {
+    $this->dispatcher = $dispatcher;
+  } 
+
+  function moneyTransfer($amount) {
+    $this->dispatcher->dispatch('bank.money_transfer', new Event());
+  }
+}
+
+class StockMarket {
+  private $dispatcher = null;
+
+  function __construct(EventDispatcher $dispatcher) {
+    $this->dispatcher = $dispatcher;
+    $this->dispatcher->addListener('bank.money_transfer', array($this, 'onMoneyTransfer'));
+  }  
+
+  function onMoneyTransfer(Event $event) {
+    drupal_set_message('Money was transferred');
+  }
+}
+
+function vdmi_eventdispatcher_preprocess_page(&$variables) {
+
+  $bankDispatcher = new EventDispatcher();
+  $bank = new Bank($bankDispatcher);
+  $stockMarket = new StockMarket($bankDispatcher);
+
+  $bank->moneyTransfer(30);
+}

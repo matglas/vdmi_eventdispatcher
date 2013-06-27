@@ -1,0 +1,6 @@
+name: VDMi EventDispatcher Examples
+type: module
+description: 'Shows some examples of how the EventDispatcher can be used.'
+package: Core
+version: VERSION
+core: 8.x
