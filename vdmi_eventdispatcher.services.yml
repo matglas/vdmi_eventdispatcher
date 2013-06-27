@@ -1,0 +1,5 @@
+services:
+  stockmarket.subscriber:
+    class: Drupal\vdmi_eventdispatcher\EventSubscriber\StockMarketSubscriber
+    tags:
+      - { name: event_subscriber }

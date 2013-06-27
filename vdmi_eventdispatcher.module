@@ -2,7 +2,11 @@
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\Event;
+use Drupal\vdmi_eventdispatcher\EventSubscriber\StockMarketSubscriber;
 
+/**
+ * Implementation of a Bank to transfer money.
+ */
 class Bank {
   private $dispatcher = null;
 
@@ -15,24 +19,37 @@ class Bank {
   }
 }
 
+/**
+ * Implementation of a StockMarket that want t know about bank money.
+ */
 class StockMarket {
   private $dispatcher = null;
 
   function __construct(EventDispatcher $dispatcher) {
     $this->dispatcher = $dispatcher;
-    $this->dispatcher->addListener('bank.money_transfer', array($this, 'onMoneyTransfer'));
+    $this->dispatcher->addListener(
+      'bank.money_transfer', 
+      array($this, 'onMoneyTransfer')
+    );
   }  
 
   function onMoneyTransfer(Event $event) {
-    drupal_set_message('Money was transferred');
+    drupal_set_message('Money was transferred', 'status', TRUE);
   }
 }
 
 function vdmi_eventdispatcher_preprocess_page(&$variables) {
 
-  $bankDispatcher = new EventDispatcher();
+  // Basic example.
+  $bankDispatcher = Drupal::service('event_dispatcher');
   $bank = new Bank($bankDispatcher);
   $stockMarket = new StockMarket($bankDispatcher);
 
   $bank->moneyTransfer(30);
+
+  // Subscriber example
+  
+  // Retrieving the central event dispatcher.
+  $event_dispatcher = Drupal::service('event_dispatcher');
+  $event_dispatcher->dispatch('bank.money_transfer', new Event());
 }
