@@ -41,7 +41,7 @@ class StockMarket {
 function vdmi_eventdispatcher_preprocess_page(&$variables) {
 
   // Basic example.
-  $bankDispatcher = Drupal::service('event_dispatcher');
+  $bankDispatcher = new EventDispatcher();
   $bank = new Bank($bankDispatcher);
   $stockMarket = new StockMarket($bankDispatcher);
 
